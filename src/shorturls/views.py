@@ -42,7 +42,6 @@ def redirect(request, prefix, tiny, converter=default_converter):
 
     # Get any query params from the short URL to pass on
     query_string = ''
-    print("Query String: ", request.META['QUERY_STRING'])
     query = request.META['QUERY_STRING']
     if query:
         query_string = '?' + query
