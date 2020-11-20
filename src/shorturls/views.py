@@ -40,12 +40,19 @@ def redirect(request, prefix, tiny, converter=default_converter):
         raise Http404(
             "'{0!s}' models don't have a get_absolute_url() method.".format(model.__name__))
 
+    # Get any query params from the short URL to pass on
+    query_string = ''
+    print("Query String: ", request.META['QUERY_STRING'])
+    query = request.META['QUERY_STRING']
+    if query:
+        query_string = '?' + query
+
     # We might have to translate the URL -- the badly-named get_absolute_url
     # actually returns a domain-relative URL -- into a fully qualified one.
 
     # If we got a fully-qualified URL, sweet.
     if urlsplit(url)[0]:
-        return HttpResponsePermanentRedirect(url)
+        return HttpResponsePermanentRedirect(url+query_string)
 
     # Otherwise, we need to make a full URL by prepending a base URL.
     # First, look for an explicit setting.
@@ -56,4 +63,4 @@ def redirect(request, prefix, tiny, converter=default_converter):
     else:
         base = 'http://{0!s}/'.format(get_current_site(request).domain)
 
-    return HttpResponsePermanentRedirect(urljoin(base, url))
+    return HttpResponsePermanentRedirect(urljoin(base, url + query_string))
